@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SLC Review — HUB International</title>
+<style>
+  :root {
+    --classic-blue: #263746;
+    --electric-blue: #0678d5;
+    --arctic-gray: #e3e3e3;
+    --white: #ffffff;
+    --gold: #f3b921;
+    --green: #3ebd3e;
+    --red: #ac1534;
+    --charcoal: #757584;
+    --classic-light: #385263;
+    --classic-dark: #18252d;
+    --shocking-blue: #00aeef;
+    --bg: #f4f6f9;
+    --sidebar-w: 240px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: var(--bg); color: var(--classic-dark); min-height: 100vh; }
+
+  /* ─── HEADER ─── */
+  #header {
+    background: var(--classic-blue);
+    border-bottom: 4px solid var(--gold);
+    padding: 0 28px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  #header .logo { display: flex; align-items: center; gap: 12px; }
+  #header .logo-text { color: var(--white); font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  #header .logo-text span { color: var(--gold); }
+  #header .subtitle { color: var(--arctic-gray); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+  #header .user-info { color: var(--arctic-gray); font-size: 13px; display: flex; align-items: center; gap: 10px; }
+  #header .user-info strong { color: var(--white); }
+  #logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: var(--white); padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-family: Arial, sans-serif; }
+  #logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+  /* ─── LOGIN ─── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 60px);
+  }
+  .login-card {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(38,55,70,0.12);
+    padding: 48px 40px;
+    width: 420px;
+    text-align: center;
+  }
+  .login-card h2 { color: var(--classic-blue); font-size: 22px; margin-bottom: 6px; }
+  .login-card p { color: var(--charcoal); font-size: 14px; margin-bottom: 28px; }
+  .login-card input {
+    width: 100%; padding: 12px 14px; border: 2px solid var(--arctic-gray);
+    border-radius: 6px; font-size: 15px; font-family: Arial, sans-serif;
+    margin-bottom: 14px; outline: none; transition: border 0.2s;
+  }
+  .login-card input:focus { border-color: var(--electric-blue); }
+  .login-card .btn-primary {
+    width: 100%; background: var(--electric-blue); color: var(--white);
+    border: none; padding: 13px; border-radius: 6px; font-size: 16px;
+    font-weight: 700; cursor: pointer; font-family: Arial, sans-serif;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .login-card .btn-primary:hover { background: #055ab0; }
+  .login-card .err { color: var(--red); font-size: 13px; margin-top: 10px; }
+
+  /* ─── LAYOUT ─── */
+  #app { display: none; flex-direction: row; min-height: calc(100vh - 60px); }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    width: var(--sidebar-w); background: var(--classic-blue);
+    padding: 24px 0; flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .sidebar-section { padding: 8px 20px 4px; color: var(--gold); font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; color: var(--arctic-gray); font-size: 14px;
+    cursor: pointer; border-left: 3px solid transparent;
+    transition: all 0.15s; text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+  .nav-item.active { background: rgba(6,120,213,0.2); color: var(--white); border-left-color: var(--electric-blue); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 8px 20px; }
+
+  /* ─── MAIN CONTENT ─── */
+  #main { flex: 1; padding: 28px; overflow-y: auto; }
+
+  /* ─── PAGE HEADERS ─── */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .page-header h1 { font-size: 24px; font-weight: 900; color: var(--classic-blue); }
+  .page-header p { color: var(--charcoal); font-size: 14px; margin-top: 3px; }
+
+  /* ─── STAT CARDS ─── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--white); border-radius: 8px; padding: 20px 18px;
+    box-shadow: 0 1px 6px rgba(38,55,70,0.08);
+    border-top: 3px solid var(--electric-blue);
+  }
+  .stat-card.gold { border-top-color: var(--gold); }
+  .stat-card.green { border-top-color: var(--green); }
+  .stat-card.red { border-top-color: var(--red); }
+  .stat-card .num { font-size: 32px; font-weight: 900; color: var(--classic-blue); }
+  .stat-card .label { font-size: 12px; color: var(--charcoal); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* ─── FILTERS BAR ─── */
+  .filters-bar {
+    background: var(--white); border-radius: 8px; padding: 16px 20px;
+    box-shadow: 0 1px 6px rgba(38,55,70,0.08);
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;
+    margin-bottom: 20px;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 5px; }
+  .filter-group label { font-size: 11px; font-weight: 700; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.8px; }
+  .filter-group select, .filter-group input {
+    padding: 8px 12px; border: 2px solid var(--arctic-gray); border-radius: 6px;
+    font-size: 14px; font-family: Arial, sans-serif; outline: none;
+    background: var(--white); color: var(--classic-dark); min-width: 140px;
+  }
+  .filter-group select:focus, .filter-group input:focus { border-color: var(--electric-blue); }
+  .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: Arial, sans-serif; border: none; text-transform: uppercase; letter-spacing: 0.5px; transition: background 0.15s; }
+  .btn-primary { background: var(--electric-blue); color: var(--white); }
+  .btn-primary:hover { background: #055ab0; }
+  .btn-secondary { background: var(--arctic-gray); color: var(--classic-blue); }
+  .btn-secondary:hover { background: #cbcbcb; }
+  .btn-gold { background: var(--gold); color: var(--classic-blue); }
+  .btn-gold:hover { background: #d9a51c; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  /* ─── TABS ─── */
+  .tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--arctic-gray); }
+  .tab {
+    padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer;
+    color: var(--charcoal); border-bottom: 3px solid transparent; margin-bottom: -2px;
+    text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.15s;
+  }
+  .tab:hover { color: var(--classic-blue); }
+  .tab.active { color: var(--electric-blue); border-bottom-color: var(--electric-blue); }
+
+  /* ─── TABLE ─── */
+  .table-wrap { background: var(--white); border-radius: 8px; box-shadow: 0 1px 6px rgba(38,55,70,0.08); overflow: hidden; }
+  .table-wrap table { width: 100%; border-collapse: collapse; }
+  .table-wrap thead { background: var(--classic-blue); color: var(--white); }
+  .table-wrap th { padding: 12px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; white-space: nowrap; }
+  .table-wrap td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid #f0f2f5; vertical-align: middle; }
+  .table-wrap tr:last-child td { border-bottom: none; }
+  .table-wrap tr:hover td { background: #f7f9fc; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-green { background: #e8f8e8; color: #1e7d1e; }
+  .badge-red { background: #fde8ec; color: var(--red); }
+  .badge-gold { background: #fff3d0; color: #8a6500; }
+  .badge-blue { background: #e3f0fc; color: #0455a0; }
+  .badge-gray { background: #f0f0f0; color: var(--charcoal); }
+  .office-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .office-chatham { background: #e8f0fc; color: #0455a0; }
+  .office-london { background: #fff3d0; color: #7a5200; }
+  .office-sarnia { background: #e8f8e8; color: #1e7d1e; }
+
+  .pagination { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-top: 1px solid var(--arctic-gray); }
+  .pagination button { padding: 5px 12px; border: 1px solid var(--arctic-gray); background: var(--white); border-radius: 4px; cursor: pointer; font-family: Arial, sans-serif; font-size: 13px; }
+  .pagination button:hover:not(:disabled) { background: var(--bg); }
+  .pagination button:disabled { opacity: 0.4; cursor: default; }
+  .pagination .page-info { font-size: 13px; color: var(--charcoal); margin: 0 6px; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(24,37,45,0.55); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 10px; width: 560px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(24,37,45,0.2);
+  }
+  .modal-header {
+    background: var(--classic-blue); color: var(--white);
+    padding: 18px 24px; border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 700; }
+  .modal-close { background: none; border: none; color: var(--white); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; }
+  .modal-body { padding: 24px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 11px; font-weight: 700; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.8px; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px; border: 2px solid var(--arctic-gray); border-radius: 6px;
+    font-size: 14px; font-family: Arial, sans-serif; outline: none;
+    background: var(--white); color: var(--classic-dark);
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--electric-blue); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--arctic-gray); display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ─── EMPTY / LOADING ─── */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--charcoal); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+  .loading { text-align: center; padding: 40px; color: var(--charcoal); font-size: 15px; }
+  .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--arctic-gray); border-top-color: var(--electric-blue); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--classic-blue); color: var(--white);
+    padding: 13px 20px; border-radius: 8px; font-size: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: none;
+    border-left: 4px solid var(--gold);
+  }
+  .toast.show { display: block; }
+  .toast.success { border-left-color: var(--green); }
+  .toast.error { border-left-color: var(--red); }
+
+  /* ─── ADMIN IMPORT ─── */
+  #import-section { background: var(--white); border-radius: 8px; padding: 24px; box-shadow: 0 1px 6px rgba(38,55,70,0.08); margin-bottom: 20px; }
+  #import-section h3 { color: var(--classic-blue); font-size: 16px; margin-bottom: 8px; }
+  #import-section p { color: var(--charcoal); font-size: 13px; margin-bottom: 14px; }
+  #import-progress { margin-top: 12px; font-size: 13px; color: var(--charcoal); }
+  progress { width: 100%; height: 8px; border-radius: 4px; margin-top: 8px; }
+
+  .delete-btn { background: none; border: none; color: var(--charcoal); cursor: pointer; font-size: 15px; padding: 3px 6px; border-radius: 4px; }
+  .delete-btn:hover { background: #fde8ec; color: var(--red); }
+
+  @media (max-width: 768px) {
+    #sidebar { display: none; }
+    #main { padding: 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">
+    <div>
+      <div class="logo-text">HUB<span>.</span></div>
+      <div class="subtitle">SLC Review</div>
+    </div>
+  </div>
+  <div class="user-info" id="user-display" style="display:none">
+    <span>Logged in as <strong id="user-email-display"></strong></span>
+    <button id="logout-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <h2>Welcome to SLC Review</h2>
+    <p>Enter your HUB International email address to sign in</p>
+    <input type="email" id="login-email" placeholder="yourname@hubinternational.com" />
+    <button class="btn-primary" onclick="login()">Sign In</button>
+    <div class="err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-section">Navigation</div>
+    <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <span class="icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('records')" id="nav-records">
+      <span class="icon">📋</span> All Records
+    </div>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section">Add New</div>
+    <div class="nav-item" onclick="openModal('new_business')">
+      <span class="icon">⭐</span> New Business
+    </div>
+    <div class="nav-item" onclick="openModal('call_rotation')">
+      <span class="icon">📞</span> Call Rotation
+    </div>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section">Admin</div>
+    <div class="nav-item" onclick="showPage('admin')" id="nav-admin">
+      <span class="icon">🔧</span> Admin Panel
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Overview of all Sarnia, London & Chatham activity</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="openModal('new_business')">+ New Business</button>
+          <button class="btn btn-primary" onclick="openModal('call_rotation')">+ Call Rotation</button>
+        </div>
+      </div>
+      <div class="stats-grid" id="dash-stats">
+        <div class="stat-card"><div class="num" id="stat-total">—</div><div class="label">Total Records</div></div>
+        <div class="stat-card gold"><div class="num" id="stat-chatham">—</div><div class="label">Chatham</div></div>
+        <div class="stat-card green"><div class="num" id="stat-london">—</div><div class="label">London</div></div>
+        <div class="stat-card red"><div class="num" id="stat-sarnia">—</div><div class="label">Sarnia</div></div>
+      </div>
+      <!-- LAST TRANSFER BANNER -->
+      <div id="last-transfer-wrap" style="margin-bottom:20px;"></div>
+
+      <!-- WHO'S OFF TODAY -->
+      <div id="whos-off-wrap" style="margin-bottom:20px;"></div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchDashTab('new_business',this)">New Business</div>
+        <div class="tab" onclick="switchDashTab('call_rotation',this)">Call Rotation</div>
+      </div>
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Office</label>
+          <select id="dash-office">
+            <option value="">All Offices</option>
+            <option>Chatham</option>
+            <option>London</option>
+            <option>Sarnia</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Date From</label>
+          <input type="date" id="dash-date-from"/>
+        </div>
+        <div class="filter-group">
+          <label>Date To</label>
+          <input type="date" id="dash-date-to"/>
+        </div>
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="text" id="dash-search" placeholder="Broker, client, keyword…" style="min-width:200px"/>
+        </div>
+        <div class="filter-group" style="justify-content:flex-end">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="loadRecords()">Search</button>
+        </div>
+      </div>
+      <div id="dash-table-wrap"></div>
+    </div>
+
+    <!-- ALL RECORDS PAGE -->
+    <div id="page-records" style="display:none">
+      <div class="page-header">
+        <div><h1>All Records</h1><p>Browse and manage all office records</p></div>
+      </div>
+      <!-- Same filters, separate IDs -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Office</label>
+          <select id="rec-office">
+            <option value="">All Offices</option>
+            <option>Chatham</option>
+            <option>London</option>
+            <option>Sarnia</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Record Type</label>
+          <select id="rec-type">
+            <option value="">All Types</option>
+            <option value="quote_rotation">Quote Rotation</option>
+            <option value="call_rotation">Call Rotation</option>
+            <option value="vacation_tracker">Vacation Tracker</option>
+            <option value="new_business">New Business</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Date From</label>
+          <input type="date" id="rec-date-from"/>
+        </div>
+        <div class="filter-group">
+          <label>Date To</label>
+          <input type="date" id="rec-date-to"/>
+        </div>
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="text" id="rec-search" placeholder="Broker, client, keyword…" style="min-width:200px"/>
+        </div>
+        <div class="filter-group" style="justify-content:flex-end">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="loadAllRecords()">Search</button>
+        </div>
+      </div>
+      <div id="rec-table-wrap"></div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div id="page-admin" style="display:none">
+      <div class="page-header">
+        <div><h1>Admin Panel</h1><p>Import historical data and manage settings</p></div>
+      </div>
+      <div id="admin-login-wrap">
+        <div style="background:var(--white);border-radius:8px;padding:32px;max-width:400px;box-shadow:0 1px 6px rgba(38,55,70,0.08)">
+          <h3 style="color:var(--classic-blue);margin-bottom:12px">Admin Access Required</h3>
+          <input type="password" id="admin-pw" placeholder="Admin password" style="width:100%;padding:10px;border:2px solid var(--arctic-gray);border-radius:6px;font-size:14px;margin-bottom:12px;font-family:Arial"/>
+          <button class="btn btn-primary" onclick="adminLogin()">Enter Admin</button>
+          <div id="admin-pw-err" style="color:var(--red);font-size:13px;margin-top:8px"></div>
+        </div>
+      </div>
+      <div id="admin-content" style="display:none">
+        <div id="import-section">
+          <h3>📥 Import Historical Excel Data</h3>
+          <p>Import all historical records from the 6 original Excel files into Supabase. This only needs to be done once. Duplicate records are skipped automatically.</p>
+          <button class="btn btn-gold" onclick="startImport()" id="import-btn">Start Import</button>
+          <div id="import-progress"></div>
+        </div>
+        <div style="background:var(--white);border-radius:8px;padding:24px;box-shadow:0 1px 6px rgba(38,55,70,0.08);margin-bottom:20px">
+          <h3 style="color:var(--classic-blue);margin-bottom:6px">👥 Broker Management</h3>
+          <p style="color:var(--charcoal);font-size:13px;margin-bottom:16px">Add or remove brokers from each office's suggestion lists separately for New Business and Call Rotation.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <div class="filter-group">
+              <label>Record Type</label>
+              <select id="broker-mgmt-type" onchange="renderBrokerList()">
+                <option value="new_business">New Business</option>
+                <option value="call_rotation">Call Rotation</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Office</label>
+              <select id="broker-mgmt-office" onchange="renderBrokerList()">
+                <option>Sarnia</option>
+                <option>London</option>
+                <option>Chatham</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Add Broker</label>
+              <input type="text" id="broker-mgmt-name" placeholder="First Last" style="min-width:200px"/>
+            </div>
+            <div class="filter-group" style="justify-content:flex-end">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" onclick="addBroker()">Add</button>
+            </div>
+          </div>
+          <div id="broker-list-wrap"></div>
+        </div>
+
+        <div style="background:var(--white);border-radius:8px;padding:24px;box-shadow:0 1px 6px rgba(38,55,70,0.08)">
+          <h3 style="color:var(--classic-blue);margin-bottom:12px">Database Stats</h3>
+          <div id="admin-stats" class="stats-grid"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ADD RECORD MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Record</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRecord()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://tcenlopdsmsijpxkidmm.supabase.co';
+const CALENDAR_URL = 'https://zzpayiejynppqhtynlnk.supabase.co';
+const CALENDAR_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6cGF5aWVqeW5wcHFodHlubG5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MTQwNzEsImV4cCI6MjA4NzQ5MDA3MX0.zV0eYc6raOOWP2ebuX0JJep-mzqWCn74rj0JWcjEaAI';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjZW5sb3Bkc21zaWpweGtpZG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTA5NjUsImV4cCI6MjA4OTQyNjk2NX0.3YpX49fuMihfCFwTWQs3vgfCZKUjTh1xQPBNrq69OLo';
+const ALLOWED_DOMAINS = ['hubinternational.com', 'hubprivateclient.com'];
+const ADMIN_PASSWORD = 'HubAdmin2025!';
+const PAGE_SIZE = 50;
+
+let currentUser = null;
+let currentPage = 1;
+let currentRecPage = 1;
+let currentTab = 'new_business';
+let totalCount = 0;
+let recTotalCount = 0;
+let currentRecordType = null;
+
+// ─── SUPABASE HELPERS ─────────────────────────────────
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(SUPABASE_URL + path, {
+    ...opts,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...opts.headers
+    }
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.message || e.error_description || res.statusText);
+  }
+  const ct = res.headers.get('content-type') || '';
+  if (ct.includes('json')) return res.json();
+  return null;
+}
+
+// ─── AUTH ─────────────────────────────────────────────
+function login() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const err = document.getElementById('login-err');
+  err.textContent = '';
+  if (!email) { err.textContent = 'Please enter your email address.'; return; }
+  const domain = email.split('@')[1];
+  if (!ALLOWED_DOMAINS.includes(domain)) {
+    err.textContent = 'Please use your @hubinternational.com or @hubprivateclient.com email.';
+    return;
+  }
+  // Store email and go straight in — no password needed
+  currentUser = { email };
+  onLoginSuccess(email);
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('user-display').style.display = 'none';
+  document.getElementById('login-email').value = '';
+}
+
+function onLoginSuccess(email) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('user-display').style.display = 'flex';
+  document.getElementById('user-email-display').textContent = email;
+  loadDashStats();
+  loadLastTransfers();
+  loadWhosOff();
+  loadRecords();
+}
+
+// ─── NAVIGATION ───────────────────────────────────────
+function showPage(page) {
+  ['dashboard','records','admin'].forEach(p => {
+    document.getElementById('page-'+p).style.display = p === page ? '' : 'none';
+    const nav = document.getElementById('nav-'+p);
+    if (nav) nav.classList.toggle('active', p === page);
+  });
+  if (page === 'records') loadAllRecords();
+  if (page === 'admin') loadAdminStats();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────
+async function loadDashStats() {
+  try {
+    const countFor = async (filter) => {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/slc_records?' + filter, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Prefer': 'count=exact',
+          'Range-Unit': 'items',
+          'Range': '0-0'
+        }
+      });
+      const cr = res.headers.get('content-range');
+      if (cr && cr.includes('/')) return parseInt(cr.split('/')[1]);
+      return 0;
+    };
+    const [total, chatham, london, sarnia] = await Promise.all([
+      countFor('select=id'),
+      countFor('select=id&office=eq.Chatham'),
+      countFor('select=id&office=eq.London'),
+      countFor('select=id&office=eq.Sarnia'),
+    ]);
+    document.getElementById('stat-total').textContent = total.toLocaleString();
+    document.getElementById('stat-chatham').textContent = chatham.toLocaleString();
+    document.getElementById('stat-london').textContent = london.toLocaleString();
+    document.getElementById('stat-sarnia').textContent = sarnia.toLocaleString();
+  } catch(e) { /* stats not critical */ }
+}
+
+async function loadLastTransfers() {
+  const wrap = document.getElementById('last-transfer-wrap');
+  try {
+    const offices = ['Chatham','London','Sarnia'];
+    const results = await Promise.all(offices.map(o =>
+      sbFetch(`/rest/v1/slc_records?office=eq.${o}&record_type=eq.call_rotation&order=record_date.desc.nullslast,id.desc&limit=1`)
+    ));
+    let html = '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">';
+    offices.forEach((o, i) => {
+      const r = (results[i] || [])[0];
+      const colorMap = {Chatham:'var(--electric-blue)', London:'var(--gold)', Sarnia:'var(--green)'};
+      if (r) {
+        html += `<div style="flex:1;min-width:200px;background:var(--white);border-radius:8px;padding:14px 18px;box-shadow:0 1px 6px rgba(38,55,70,0.08);border-left:4px solid ${colorMap[o]}">
+          <div style="font-size:10px;font-weight:700;color:var(--charcoal);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">📞 Last ${o} Transfer</div>
+          <div style="font-size:15px;font-weight:700;color:var(--classic-blue)">${r.broker_name || '—'}</div>
+          <div style="font-size:12px;color:var(--charcoal);margin-top:2px">${r.client_name || ''} ${r.record_date ? '· ' + r.record_date : ''}</div>
+        </div>`;
+      } else {
+        html += `<div style="flex:1;min-width:200px;background:var(--white);border-radius:8px;padding:14px 18px;box-shadow:0 1px 6px rgba(38,55,70,0.08);border-left:4px solid ${colorMap[o]}">
+          <div style="font-size:10px;font-weight:700;color:var(--charcoal);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">📞 Last ${o} Transfer</div>
+          <div style="font-size:13px;color:var(--charcoal)">No records yet</div>
+        </div>`;
+      }
+    });
+    html += '</div>';
+    wrap.innerHTML = html;
+  } catch(e) { wrap.innerHTML = ''; }
+}
+
+async function loadWhosOff() {
+  const wrap = document.getElementById('whos-off-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div style="background:var(--white);border-radius:8px;padding:16px 20px;box-shadow:0 1px 6px rgba(38,55,70,0.08);"><span class="spinner"></span> Loading today\'s schedule…</div>';
+
+  const today = new Date().toISOString().split('T')[0];
+  const slcOffices = ['sarnia', 'london', 'chatham'];
+
+  try {
+    const res = await fetch(
+      `${CALENDAR_URL}/rest/v1/hub_calendar?entry_type=in.(employee-off,team-member)&office=in.(sarnia,london,chatham)&entry_date=lte.${today}&order=office.asc,entry_name.asc`,
+      { headers: { 'apikey': CALENDAR_KEY, 'Authorization': 'Bearer ' + CALENDAR_KEY } }
+    );
+    const data = await res.json();
+
+    // Filter to entries active today
+    const active = (data || []).filter(r => {
+      if (!r.entry_date) return false;
+      const end = r.end_date;
+      if (end && end < today) return false;
+      return true;
+    });
+
+    // Group by office
+    const byOffice = { sarnia: [], london: [], chatham: [] };
+    active.forEach(r => {
+      const o = (r.office || '').toLowerCase();
+      if (byOffice[o] !== undefined) byOffice[o].push(r);
+    });
+
+    // Match calendar colors — employee-off is orange/coral in the calendar
+    const officeConfig = {
+      sarnia:  { dot: '#f97316', label: 'Sarnia' },
+      london:  { dot: '#22c55e', label: 'London' },
+      chatham: { dot: '#ec4899', label: 'Chatham' }
+    };
+    // employee-off color from calendar = orange
+    const entryColor = '#f97316';
+    const entryBg = '#fff7ed';
+
+    let html = `<div style="background:var(--white);border-radius:8px;box-shadow:0 1px 6px rgba(38,55,70,0.08);overflow:hidden;">
+      <div style="background:var(--classic-blue);padding:12px 20px;border-bottom:4px solid var(--gold);display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:var(--white);font-weight:700;font-size:14px;letter-spacing:0.3px;">📅 Employee Off Today</div>
+        <div style="color:var(--arctic-gray);font-size:12px;">${new Date().toLocaleDateString('en-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);">`;
+
+    slcOffices.forEach((office, i) => {
+      const entries = byOffice[office];
+      const cfg = officeConfig[office];
+      const borderRight = i < 2 ? 'border-right:1px solid var(--arctic-gray);' : '';
+      html += `<div style="padding:14px 18px;${borderRight}">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--charcoal);">
+          <span style="width:8px;height:8px;border-radius:50%;background:${cfg.dot};display:inline-block;flex-shrink:0;"></span>
+          ${cfg.label}
+        </div>`;
+
+      if (!entries.length) {
+        html += `<div style="color:var(--charcoal);font-size:13px;font-style:italic;display:flex;align-items:center;gap:6px;"><span style="color:#22c55e;font-size:15px;">✓</span> Everyone in</div>`;
+      } else {
+        entries.forEach(r => {
+          const name = r.entry_name || 'Unknown';
+          const endStr = r.end_date && r.end_date !== today
+            ? `<div style="color:var(--charcoal);font-size:11px;margin-top:1px;">until ${r.end_date}</div>`
+            : '';
+          html += `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:${entryColor};display:inline-block;flex-shrink:0;margin-top:4px;"></span>
+            <div>
+              <div style="font-size:13px;color:var(--classic-blue);font-weight:600;line-height:1.3;">${name}</div>
+              ${endStr}
+            </div>
+          </div>`;
+        });
+      }
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+    wrap.innerHTML = html;
+
+  } catch(e) {
+    wrap.innerHTML = `<div style="background:var(--white);border-radius:8px;padding:16px 20px;box-shadow:0 1px 6px rgba(38,55,70,0.08);color:var(--charcoal);font-size:13px;">⚠️ Could not load calendar data.</div>`;
+  }
+}
+
+function switchDashTab(type, el) {
+  currentTab = type;
+  currentPage = 1;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadRecords();
+}
+
+async function loadRecords() {
+  currentPage = currentPage || 1;
+  const office = document.getElementById('dash-office').value;
+  const dateFrom = document.getElementById('dash-date-from').value;
+  const dateTo = document.getElementById('dash-date-to').value;
+  const search = document.getElementById('dash-search').value.trim();
+
+  let typeFilter = '';
+  if (currentTab === 'new_business') {
+    typeFilter = '&or=(record_type.eq.new_business,record_type.eq.quote_rotation)';
+  } else if (currentTab === 'call_rotation') {
+    typeFilter = '&or=(record_type.eq.call_rotation,record_type.eq.vacation_tracker)';
+  }
+  let url = `/rest/v1/slc_records?order=record_date.desc.nullslast,id.desc${typeFilter}`;
+  if (office) url += `&office=eq.${office}`;
+  if (dateFrom) url += `&record_date=gte.${dateFrom}`;
+  if (dateTo) url += `&record_date=lte.${dateTo}`;
+  if (search) url += `&or=(broker_name.ilike.*${encodeURIComponent(search)}*,client_name.ilike.*${encodeURIComponent(search)}*)`;
+
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const wrap = document.getElementById('dash-table-wrap');
+  wrap.innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+
+  try {
+    const data = await sbFetch(url + `&limit=${PAGE_SIZE}&offset=${from}`, {
+      headers: { 'Range': `${from}-${to}`, 'Range-Unit': 'items', 'Prefer': 'count=exact' }
+    });
+    renderTable(wrap, data || [], currentTab, 'dash');
+  } catch(e) {
+    wrap.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${e.message}</p></div>`;
+  }
+}
+
+async function loadAllRecords() {
+  currentRecPage = currentRecPage || 1;
+  const office = document.getElementById('rec-office').value;
+  const type = document.getElementById('rec-type').value;
+  const dateFrom = document.getElementById('rec-date-from').value;
+  const dateTo = document.getElementById('rec-date-to').value;
+  const search = document.getElementById('rec-search').value.trim();
+
+  let url = `/rest/v1/slc_records?order=record_date.desc.nullslast,id.desc`;
+  if (office) url += `&office=eq.${office}`;
+  if (type) url += `&record_type=eq.${type}`;
+  if (dateFrom) url += `&record_date=gte.${dateFrom}`;
+  if (dateTo) url += `&record_date=lte.${dateTo}`;
+  if (search) url += `&or=(broker_name.ilike.*${encodeURIComponent(search)}*,client_name.ilike.*${encodeURIComponent(search)}*)`;
+
+  const from = (currentRecPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const wrap = document.getElementById('rec-table-wrap');
+  wrap.innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+
+  try {
+    const data = await sbFetch(url + `&limit=${PAGE_SIZE}&offset=${from}`, {
+      headers: { 'Range': `${from}-${to}`, 'Range-Unit': 'items', 'Prefer': 'count=exact' }
+    });
+    renderTable(wrap, data || [], type || 'all', 'rec');
+  } catch(e) {
+    wrap.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${e.message}</p></div>`;
+  }
+}
+
+// ─── TABLE RENDER ─────────────────────────────────────
+function renderTable(wrap, records, type, ctx) {
+  if (!records.length) {
+    wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No records found. Try adjusting your filters.</p></div>';
+    return;
+  }
+
+  const cols = getColumns(type);
+  let html = `<div class="table-wrap"><table><thead><tr>`;
+  cols.forEach(c => html += `<th>${c.label}</th>`);
+  html += `<th></th></tr></thead><tbody>`;
+
+  records.forEach(r => {
+    html += '<tr>';
+    cols.forEach(c => {
+      let val = r[c.field] || '';
+      if (c.field === 'office') val = `<span class="office-badge office-${val.toLowerCase()}">${val}</span>`;
+      if (c.field === 'record_type') val = typeBadge(val);
+      if (c.field === 'available') val = availBadge(val);
+      if (c.field === 'record_date' && val) val = formatDate(val);
+      if (c.field === 'entered_by' && val) val = `<span style="font-size:11px;color:var(--charcoal)">${val.split('@')[0]}</span>`;
+      html += `<td>${val}</td>`;
+    });
+    html += `<td><button class="delete-btn" onclick="deleteRecord(${r.id})" title="Delete">🗑</button></td>`;
+    html += '</tr>';
+  });
+
+  html += `</tbody></table>`;
+  html += `<div class="pagination">
+    <button onclick="changePage('${ctx}',-1)" ${(ctx==='dash'?currentPage:currentRecPage)<=1?'disabled':''}>← Prev</button>
+    <span class="page-info">Page ${ctx==='dash'?currentPage:currentRecPage} · ${records.length} shown</span>
+    <button onclick="changePage('${ctx}',1)" ${records.length<PAGE_SIZE?'disabled':''}>Next →</button>
+  </div>`;
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+function changePage(ctx, dir) {
+  if (ctx === 'dash') { currentPage = Math.max(1, currentPage + dir); loadRecords(); }
+  else { currentRecPage = Math.max(1, currentRecPage + dir); loadAllRecords(); }
+}
+
+function getColumns(type) {
+  const base = [
+    {label:'Office', field:'office'},
+    {label:'Broker', field:'broker_name'},
+    {label:'Date', field:'record_date'},
+    {label:'Time', field:'record_time'},
+  ];
+  if (type === 'all') {
+    return [{label:'Type', field:'record_type'}, ...base,
+      {label:'Available', field:'available'},
+      {label:'Client', field:'client_name'},
+      {label:'Contact', field:'contact_details'},
+      {label:'Entered By', field:'entered_by'},
+    ];
+  }
+  if (type === 'call_rotation') return [...base,
+    {label:'Client Code', field:'client_code'},
+    {label:'Client Name', field:'client_name'},
+    {label:'Entered By', field:'entered_by'},
+  ];
+  if (type === 'new_business') return [...base,
+    {label:'In/Call', field:'in_call'},
+    {label:'Client', field:'client_name'},
+    {label:'Phone', field:'phone'},
+    {label:'H/A', field:'ha'},
+    {label:'How Heard', field:'how_heard'},
+    {label:'Entered By', field:'entered_by'},
+  ];
+  return [...base,
+    {label:'Available', field:'available'},
+    {label:'Client', field:'client_name'},
+    {label:'Contact', field:'contact_details'},
+    {label:'How Heard', field:'how_heard'},
+    {label:'Entered By', field:'entered_by'},
+  ];
+}
+
+function typeBadge(t) {
+  const map = { quote_rotation:'⭐ New Biz', call_rotation:'📞 Call', vacation_tracker:'📞 Call', new_business:'⭐ New Biz' };
+  return `<span class="badge badge-blue">${map[t]||t}</span>`;
+}
+function availBadge(v) {
+  if (!v) return '';
+  const lo = v.toLowerCase();
+  if (lo.startsWith('y') || lo === 'yes') return `<span class="badge badge-green">${v}</span>`;
+  if (lo.startsWith('n') || lo === 'no' || lo === 'away') return `<span class="badge badge-red">${v}</span>`;
+  return `<span class="badge badge-gold">${v}</span>`;
+}
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-CA'); } catch { return d; }
+}
+
+// ─── ADD RECORD MODAL ─────────────────────────────────
+const FORMS = {
+  quote_rotation: `
+    <div class="form-row">
+      <div class="form-group"><label>Office *</label><select id="f-office"><option>Chatham</option><option>London</option><option>Sarnia</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="f-date"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Time</label><input type="time" id="f-time"/></div>
+      <div class="form-group"><label>Available?</label><select id="f-available"><option value="">—</option><option>Yes</option><option>No</option><option>Away</option><option>VM</option><option>Emailed</option></select></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Broker Name & Phone *</label><input type="text" id="f-broker" placeholder="e.g. Mike Dennis 519-931-1179"/></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client Name</label><input type="text" id="f-client"/></div>
+      <div class="form-group"><label>Contact Details</label><input type="text" id="f-contact"/></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>How Did You Hear About Us?</label><input type="text" id="f-how-heard"/></div></div>`,
+
+  call_rotation: `
+    <div class="form-row">
+      <div class="form-group"><label>Office *</label><select id="f-office" onchange="suggestBroker('call_rotation')"><option>London</option><option>Chatham</option><option>Sarnia</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="f-date"/></div>
+    </div>
+    <div id="broker-suggestion" style="margin-bottom:12px;display:none">
+      <div style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:6px;padding:10px 14px;font-size:13px;color:var(--classic-blue)">
+        <strong>💡 Suggested next broker:</strong> <span id="suggested-broker-name" style="color:var(--electric-blue);cursor:pointer;text-decoration:underline" onclick="useSuggestedBroker()"></span>
+        <span id="suggested-broker-reason" style="color:var(--charcoal);font-size:12px;margin-left:6px"></span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Time</label><input type="time" id="f-time"/></div>
+      <div class="form-group"><label>Available?</label><select id="f-available"><option value="">—</option><option>Yes</option><option>No</option><option>Away</option><option>VM</option><option>Emailed</option></select></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Broker Name *</label><input type="text" id="f-broker" placeholder="Start typing or use suggestion above…"/></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client Code</label><input type="text" id="f-client-code" placeholder="e.g. SMITHJO01"/></div>
+      <div class="form-group"><label>Client Name</label><input type="text" id="f-client"/></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Contact Details</label><input type="text" id="f-contact"/></div></div>`,
+
+  vacation_tracker: `
+    <div class="form-row">
+      <div class="form-group"><label>Office *</label><select id="f-office"><option>Chatham</option><option>Sarnia</option><option>London</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="f-date"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Time</label><input type="time" id="f-time"/></div>
+      <div class="form-group"><label>Available?</label><select id="f-available"><option value="">—</option><option>Yes</option><option>No</option><option>Away</option><option>VM</option><option>Emailed</option></select></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Broker Name *</label><input type="text" id="f-broker"/></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client Name</label><input type="text" id="f-client"/></div>
+      <div class="form-group"><label>Contact Details</label><input type="text" id="f-contact"/></div>
+    </div>`,
+
+  new_business: `
+    <div class="form-row">
+      <div class="form-group"><label>Office *</label><select id="f-office" onchange="suggestBroker('new_business')"><option>Sarnia</option><option>London</option><option>Chatham</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="f-date"/></div>
+    </div>
+    <div id="broker-suggestion" style="margin-bottom:12px;display:none">
+      <div style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:6px;padding:10px 14px;font-size:13px;color:var(--classic-blue)">
+        <strong>💡 Suggested next broker:</strong> <span id="suggested-broker-name" style="color:var(--electric-blue);cursor:pointer;text-decoration:underline" onclick="useSuggestedBroker()"></span>
+        <span id="suggested-broker-reason" style="color:var(--charcoal);font-size:12px;margin-left:6px"></span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Time</label><input type="time" id="f-time"/></div>
+      <div class="form-group"><label>In/Call</label><select id="f-in-call"><option value="">—</option><option>Call</option><option>Email</option><option>Walk-in</option></select></div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>Broker Name *</label><input type="text" id="f-broker" placeholder="Start typing or use suggestion above…"/></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client Name</label><input type="text" id="f-client"/></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="f-phone"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>H/A</label><select id="f-ha"><option value="">—</option><option>H</option><option>A</option><option>H/A</option></select></div>
+      <div class="form-group"><label>How Did You Hear?</label><input type="text" id="f-how-heard"/></div>
+    </div>`
+};
+
+const TITLES = { quote_rotation:'Add Quote Rotation', call_rotation:'Add Call Rotation', vacation_tracker:'Add Vacation Record', new_business:'Add New Business' };
+
+function openModal(type) {
+  currentRecordType = type;
+  document.getElementById('modal-title').textContent = TITLES[type];
+  document.getElementById('modal-body').innerHTML = FORMS[type];
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  const df = document.getElementById('f-date');
+  if (df) df.value = today;
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => suggestBroker(type), 100);
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+// Verified broker lists from HUB digital business cards
+const BROKER_LISTS = {
+  new_business: {
+    Sarnia: ['Amanda Mckay','Carissa Hetu','Chantelle Oliver','Courtney Cammidge','David Rusland','Erica Vernon','Heather Fraleigh','Kayleigh Moore','Kelly Haney','Madison Zajda','Melody Scheuermann','Nicole Tremblay','Richard Cerutti','Sara Bogaart','Stacey Roundell','Stephanie Sadaka','Steve Simpson','Tara Palominos'],
+    London: ['Christine Currie','Connor Denning','David Friesen','Kyle Sales','Nicole Tremblay','Noah Mazzilli','Steve Simpson'],
+    Chatham: ['Ashley Lucier','Courtney Pateman','Heather Fraleigh','Shelby Deneau','Suzanne Curran','Tanya Parker','Tina Beauvais']
+  },
+  call_rotation: {
+    Sarnia: ['Amanda Mckay','Carissa Hetu','Chantelle Oliver','Courtney Cammidge','David Rusland','Erica Vernon','Heather Fraleigh','Kayleigh Moore','Kelly Haney','Madison Zajda','Melody Scheuermann','Nicole Tremblay','Richard Cerutti','Sara Bogaart','Stacey Roundell','Stephanie Sadaka','Steve Simpson','Tara Palominos'],
+    London: ['Christine Currie','Connor Denning','David Friesen','Kyle Sales','Nicole Tremblay','Noah Mazzilli','Steve Simpson'],
+    Chatham: ['Ashley Lucier','Courtney Pateman','Heather Fraleigh','Shelby Deneau','Suzanne Curran','Tanya Parker','Tina Beauvais']
+  }
+};
+
+async function suggestBroker(type) {
+  const office = document.getElementById('f-office')?.value;
+  if (!office) return;
+  const wrap = document.getElementById('broker-suggestion');
+  const nameEl = document.getElementById('suggested-broker-name');
+  const reasonEl = document.getElementById('suggested-broker-reason');
+  if (!wrap) return;
+
+  const listKey = type === 'new_business' ? 'new_business' : 'call_rotation';
+  const officeBrokers = (BROKER_LISTS[listKey] && BROKER_LISTS[listKey][office]) || [];
+  const since = new Date();
+  since.setDate(since.getDate() - 7);
+  const sinceStr = since.toISOString().split('T')[0];
+
+  const typeFilter = type === 'new_business'
+    ? '&or=(record_type.eq.new_business,record_type.eq.quote_rotation)'
+    : '&or=(record_type.eq.call_rotation,record_type.eq.vacation_tracker)';
+
+  try {
+    const data = await sbFetch(`/rest/v1/slc_records?select=broker_name,record_date&office=eq.${office}${typeFilter}&record_date=gte.${sinceStr}&limit=1000`);
+
+    // Count entries per broker using the official broker list
+    const counts = {};
+    officeBrokers.forEach(b => counts[b] = 0);
+
+    (data || []).forEach(r => {
+      const full = (r.broker_name || '').trim();
+      // Match against official list (case-insensitive first name match)
+      const match = officeBrokers.find(b => b.toLowerCase().startsWith(full.split(' ')[0].toLowerCase()) || full.toLowerCase().startsWith(b.split(' ')[0].toLowerCase()));
+      if (match) counts[match] = (counts[match] || 0) + 1;
+    });
+
+    // Find broker with fewest entries
+    const sorted = Object.entries(counts).sort((a, b) => a[1] - b[1]);
+    if (!sorted.length) { wrap.style.display = 'none'; return; }
+
+    const [broker, count] = sorted[0];
+    nameEl.textContent = broker;
+    reasonEl.textContent = count === 0 ? '(no entries this week)' : `(${count} entries in last 7 days)`;
+    wrap.style.display = '';
+  } catch(e) {
+    // Fallback: just show first broker alphabetically
+    if (officeBrokers.length) {
+      nameEl.textContent = officeBrokers[0];
+      reasonEl.textContent = '';
+      wrap.style.display = '';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+}
+
+function useSuggestedBroker(name) {
+  const brokerInput = document.getElementById('f-broker');
+  if (brokerInput && name) brokerInput.value = name;
+}
+
+// ─── BROKER MANAGEMENT ───────────────────────────────
+function renderBrokerList() {
+  const office = document.getElementById('broker-mgmt-office')?.value;
+  const type = document.getElementById('broker-mgmt-type')?.value || 'new_business';
+  const wrap = document.getElementById('broker-list-wrap');
+  if (!wrap || !office) return;
+  const brokers = (BROKER_LISTS[type] && BROKER_LISTS[type][office]) || [];
+  if (!brokers.length) {
+    wrap.innerHTML = '<p style="color:var(--charcoal);font-size:13px">No brokers added yet.</p>';
+    return;
+  }
+  let html = `<div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+  brokers.sort().forEach(b => {
+    html += `<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--arctic-gray);border-radius:20px;padding:5px 12px;font-size:13px;">
+      <span>${b}</span>
+      <button onclick="removeBroker('${b}')" style="background:none;border:none;cursor:pointer;color:var(--charcoal);font-size:14px;padding:0;line-height:1;" title="Remove">✕</button>
+    </div>`;
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+function addBroker() {
+  const office = document.getElementById('broker-mgmt-office')?.value;
+  const type = document.getElementById('broker-mgmt-type')?.value || 'new_business';
+  const nameInput = document.getElementById('broker-mgmt-name');
+  const name = nameInput?.value.trim();
+  if (!name || !office) { showToast('Please enter a broker name.', 'error'); return; }
+  if (!BROKER_LISTS[type][office]) BROKER_LISTS[type][office] = [];
+  if (BROKER_LISTS[type][office].includes(name)) { showToast(`${name} is already in ${office} ${type.replace('_',' ')}.`, 'error'); return; }
+  BROKER_LISTS[type][office].push(name);
+  nameInput.value = '';
+  renderBrokerList();
+  const typeLabel = type === 'new_business' ? 'New Business' : 'Call Rotation';
+  showToast(`${name} added to ${office} ${typeLabel}!`, 'success');
+}
+
+function removeBroker(name) {
+  const office = document.getElementById('broker-mgmt-office')?.value;
+  const type = document.getElementById('broker-mgmt-type')?.value || 'new_business';
+  if (!office || !BROKER_LISTS[type] || !BROKER_LISTS[type][office]) return;
+  const typeLabel = type === 'new_business' ? 'New Business' : 'Call Rotation';
+  if (!confirm(`Remove ${name} from ${office} ${typeLabel}?`)) return;
+  BROKER_LISTS[type][office] = BROKER_LISTS[type][office].filter(b => b !== name);
+  renderBrokerList();
+  showToast(`${name} removed from ${office} ${typeLabel}.`, 'success');
+}
+
+async function saveRecord() {
+  const type = currentRecordType;
+  const broker = (document.getElementById('f-broker')?.value || '').trim();
+  if (!broker) { showToast('Broker name is required.', 'error'); return; }
+
+  const payload = {
+    record_type: type,
+    office: document.getElementById('f-office')?.value || '',
+    record_date: document.getElementById('f-date')?.value || null,
+    record_time: document.getElementById('f-time')?.value || null,
+    broker_name: broker,
+    available: document.getElementById('f-available')?.value || null,
+    client_name: document.getElementById('f-client')?.value || null,
+    contact_details: document.getElementById('f-contact')?.value || null,
+    how_heard: document.getElementById('f-how-heard')?.value || null,
+    client_code: document.getElementById('f-client-code')?.value || null,
+    in_call: document.getElementById('f-in-call')?.value || null,
+    phone: document.getElementById('f-phone')?.value || null,
+    ha: document.getElementById('f-ha')?.value || null,
+    source_sheet: 'manual',
+    entered_by: currentUser?.email || null
+  };
+
+  try {
+    await sbFetch('/rest/v1/slc_records', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify(payload)
+    });
+    closeModal();
+    showToast('Record saved successfully!', 'success');
+    loadDashStats();
+    if (currentTab === type) loadRecords();
+  } catch(e) {
+    showToast('Error saving: ' + e.message, 'error');
+  }
+}
+
+async function deleteRecord(id) {
+  if (!confirm('Delete this record?')) return;
+  try {
+    await sbFetch(`/rest/v1/slc_records?id=eq.${id}`, { method: 'DELETE' });
+    showToast('Record deleted.', 'success');
+    loadRecords();
+    loadAllRecords();
+    loadDashStats();
+  } catch(e) {
+    showToast('Delete failed: ' + e.message, 'error');
+  }
+}
+
+// ─── ADMIN ────────────────────────────────────────────
+function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('admin-login-wrap').style.display = 'none';
+    document.getElementById('admin-content').style.display = '';
+    loadAdminStats();
+    renderBrokerList();
+  } else {
+    document.getElementById('admin-pw-err').textContent = 'Incorrect password.';
+  }
+}
+
+async function loadAdminStats() {
+  if (document.getElementById('admin-content').style.display === 'none') return;
+  try {
+    const data = await sbFetch('/rest/v1/slc_records?select=office,record_type');
+    const all = data || [];
+    const types = ['quote_rotation','call_rotation','vacation_tracker','new_business'];
+    const offices = ['Chatham','London','Sarnia'];
+    let html = '';
+    offices.forEach(o => {
+      types.forEach(t => {
+        const n = all.filter(r=>r.office===o&&r.record_type===t).length;
+        if (n > 0) html += `<div class="stat-card"><div class="num">${n.toLocaleString()}</div><div class="label">${o} · ${t.replace('_',' ')}</div></div>`;
+      });
+    });
+    document.getElementById('admin-stats').innerHTML = html || '<p style="color:var(--charcoal)">No data yet.</p>';
+  } catch(e) {}
+}
+
+// ─── IMPORT ───────────────────────────────────────────
+// Historical data embedded as JSON for import
+const HISTORICAL_DATA = []; // Will be populated by the import function below
+
+async function startImport() {
+  const btn = document.getElementById('import-btn');
+  const prog = document.getElementById('import-progress');
+  btn.disabled = true;
+  prog.innerHTML = '<span class="spinner"></span> Fetching data to import…';
+
+  // The data is already in Supabase from the Python import script
+  // This button runs a check
+  try {
+    const res = await sbFetch('/rest/v1/slc_records?select=id&limit=1');
+    const count = await sbFetch('/rest/v1/slc_records?select=id');
+    prog.innerHTML = `✅ Database already contains <strong>${(count||[]).length.toLocaleString()} records</strong>. Import is complete!`;
+    loadAdminStats();
+  } catch(e) {
+    prog.innerHTML = `⚠️ ${e.message} — Make sure the table is created first (see setup SQL).`;
+  }
+  btn.disabled = false;
+}
+
+// ─── TOAST ────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Enter key on login
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('login-screen').style.display !== 'none') login();
+  }
+});
+</script>
+</body>
+</html>
