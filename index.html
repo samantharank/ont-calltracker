@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Office Services Tracker — HUB International</title>
+<title>ONT Office Services Call Tracker — HUB International</title>
 <style>
   :root {
     --classic-blue: #263746;
@@ -60,9 +60,20 @@
   .login-card h2 { color: var(--white); font-size: 22px; margin-bottom: 6px; }
   .login-card p { color: var(--arctic-gray); font-size: 14px; margin-bottom: 28px; }
   .login-card input {
-    background: rgba(255,255,255,0.1) !important;
-    border: 1px solid rgba(255,255,255,0.25) !important;
-    color: var(--white) !important;
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border: 2px solid #d0d7de;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    font-family: Arial;
+    color: #263746;
+    box-sizing: border-box;
+    background: #ffffff;
+  }
+  .login-card input:focus {
+    border-color: #0678d5;
+    outline: none;
   }
   .login-card input::placeholder { color: rgba(255,255,255,0.5) !important; }
   
@@ -257,7 +268,7 @@
   <div class="logo">
     <div style="display:flex;align-items:center;gap:10px;">
       <img src="https://raw.githubusercontent.com/samantharank/SWOreview/main/hub-logo.png" alt="HUB" style="height:32px;width:auto;display:block;" />
-      <div class="subtitle" style="font-size:13px;font-weight:600;color:var(--white);letter-spacing:0.3px;">Office Services Tracker</div>
+      <div class="subtitle" style="font-size:13px;font-weight:600;color:var(--white);letter-spacing:0.3px;">ONT Office Services Call Tracker</div>
     </div>
   </div>
   <div class="user-info" id="user-display" style="display:none">
@@ -269,11 +280,11 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <img src="https://raw.githubusercontent.com/samantharank/SWOreview/main/hub-logo.png" alt="HUB" style="height:44px;width:auto;margin-bottom:20px;" />
-    <h2>Welcome to Office Services Tracker</h2>
+    <img src="https://raw.githubusercontent.com/samantharank/SWOreview/main/hub-logo.png" alt="HUB" style="height:60px;width:auto;margin-bottom:24px;" />
+    <h2>Welcome to ONT Office Services Call Tracker</h2>
     <p>Enter your HUB International email address to sign in</p>
-    <input type="email" id="login-email" placeholder="yourname@hubinternational.com" />
-    <button class="btn-primary" onclick="login()">Sign In</button>
+    <input type="email" id="login-email" placeholder="yourname@hubinternational.com" style="width:100%;padding:14px 16px;font-size:15px;border:2px solid #d0d7de;border-radius:8px;margin-bottom:4px;font-family:Arial;color:#263746;box-sizing:border-box;" />
+    <button class="btn-primary" onclick="login()" style="width:100%;padding:14px;font-size:15px;margin-top:8px;">Sign In</button>
     <div class="err" id="login-err"></div>
   </div>
 </div>
