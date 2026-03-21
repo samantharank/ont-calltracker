@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SLC Review — HUB International</title>
+<title>Office Services Tracker — HUB International</title>
 <style>
   :root {
     --classic-blue: #263746;
@@ -252,9 +252,9 @@
 <!-- HEADER -->
 <div id="header">
   <div class="logo">
-    <div>
-      <div class="logo-text">HUB<span>.</span></div>
-      <div class="subtitle">SLC Review</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://raw.githubusercontent.com/samantharank/SWOreview/main/hub-logo.png" alt="HUB" style="height:32px;width:auto;display:block;" />
+      <div class="subtitle" style="font-size:13px;font-weight:600;color:var(--white);letter-spacing:0.3px;">Office Services Tracker</div>
     </div>
   </div>
   <div class="user-info" id="user-display" style="display:none">
@@ -266,7 +266,8 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <h2>Welcome to SLC Review</h2>
+    <img src="https://raw.githubusercontent.com/samantharank/SWOreview/main/hub-logo.png" alt="HUB" style="height:44px;width:auto;margin-bottom:20px;" />
+    <h2>Welcome to Office Services Tracker</h2>
     <p>Enter your HUB International email address to sign in</p>
     <input type="email" id="login-email" placeholder="yourname@hubinternational.com" />
     <button class="btn-primary" onclick="login()">Sign In</button>
@@ -298,6 +299,10 @@
     <div class="nav-item" onclick="showPage('admin')" id="nav-admin">
       <span class="icon">🔧</span> Admin Panel
     </div>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="https://samantharank.github.io/Officeservices-Calendar/" target="_blank" style="text-decoration:none;">
+      <span class="icon">📅</span> Office Calendar <span style="font-size:10px;opacity:0.6;margin-left:auto;">↗</span>
+    </a>
   </div>
 
   <!-- MAIN -->
