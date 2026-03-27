@@ -701,6 +701,16 @@ async function loadWhosOff() {
       if (byOffice[o] !== undefined) byOffice[o].push(r);
     });
 
+    // Populate OFF_TODAY with first names from calendar entries
+    // so suggestBroker can cross-reference and skip them
+    OFF_TODAY = { sarnia: [], london: [], chatham: [] };
+    active.forEach(r => {
+      const o = (r.office || '').toLowerCase();
+      if (OFF_TODAY[o] === undefined) return;
+      const name = (r.entry_name || '').trim();
+      if (name) OFF_TODAY[o].push(name);
+    });
+
     // Match calendar colors — employee-off is orange/coral in the calendar
     const officeConfig = {
       sarnia:  { dot: '#f97316', label: 'Sarnia' },
@@ -1037,6 +1047,7 @@ const DEFAULT_BROKER_LISTS = {
 };
 let BROKER_LISTS = { new_business: { Sarnia: [], London: [], Chatham: [] }, call_rotation: { Sarnia: [], London: [], Chatham: [] } };
 let ON_LEAVE = JSON.parse(localStorage.getItem('ont_on_leave') || '{}');
+let OFF_TODAY = {}; // Populated from calendar — { sarnia: ['Madison Zajda', ...], london: [], chatham: [] }
 
 function saveOnLeave() { localStorage.setItem('ont_on_leave', JSON.stringify(ON_LEAVE)); }
 function isOnLeave(type, office, name) { return !!(ON_LEAVE[type] && ON_LEAVE[type][office] && ON_LEAVE[type][office].includes(name)); }
