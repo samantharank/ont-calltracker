@@ -358,7 +358,7 @@
             <option value="">All Offices</option>
             <option>Chatham</option>
             <option>London</option>
-            <option>Sarnia</option>
+            <option id="dash-sarnia-opt">Sarnia</option>
           </select>
         </div>
         <div class="filter-group">
@@ -624,6 +624,8 @@ async function loadLastTransfers() {
   try {
     const offices = ['Chatham','London','Sarnia'];
     const types = ['new_business','call_rotation'];
+    // Sarnia has no call rotation — only show New Business for Sarnia
+    const officeTypes = (o, t) => o === 'Sarnia' && t === 'call_rotation' ? false : true;
     const colorMap = { Chatham:'var(--electric-blue)', London:'var(--gold)', Sarnia:'var(--green)' };
     const typeLabel = { new_business:'New Business', call_rotation:'Call Rotation' };
     const typeIcon = { new_business:'🌟', call_rotation:'📞' };
@@ -641,11 +643,13 @@ async function loadLastTransfers() {
     let html = '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">';
     offices.forEach((o, oi) => {
       const color = colorMap[o];
+      // For Sarnia only show New Business
+      const visibleTypes = o === 'Sarnia' ? ['new_business'] : types;
       html += `<div style="flex:1;min-width:280px;background:var(--white);border-radius:8px;box-shadow:0 1px 6px rgba(38,55,70,0.08);overflow:hidden;border-top:3px solid ${color}">
         <div style="padding:10px 16px 6px;font-size:11px;font-weight:700;color:var(--charcoal);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--arctic-gray)">${o}</div>`;
 
-      types.forEach((t, ti) => {
-        const r = (results[oi * 2 + ti] || [])[0];
+      visibleTypes.forEach((t, ti) => {
+        const r = (results[oi * 2 + types.indexOf(t)] || [])[0];
         const borderStyle = ti === 0 ? '' : 'border-top:1px solid var(--arctic-gray);';
         if (r) {
           html += `<div style="padding:10px 16px;${borderStyle}">
@@ -766,6 +770,16 @@ async function loadWhosOff() {
 }
 
 function switchDashTab(type, el) {
+  // Hide Sarnia from office filter when on Call Rotation tab
+  const sarniaOpt = document.getElementById('dash-sarnia-opt');
+  if (sarniaOpt) {
+    sarniaOpt.style.display = type === 'call_rotation' ? 'none' : '';
+    // If Sarnia is selected and we switch to call rotation, reset to All
+    const officeSelect = document.getElementById('dash-office');
+    if (type === 'call_rotation' && officeSelect && officeSelect.value === 'Sarnia') {
+      officeSelect.value = '';
+    }
+  }
   currentTab = type;
   currentPage = 1;
   document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
