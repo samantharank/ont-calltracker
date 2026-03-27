@@ -632,7 +632,10 @@ async function loadLastTransfers() {
     // Fetch last record for each office+type combination
     const fetches = [];
     offices.forEach(o => types.forEach(t => {
-      fetches.push(sbFetch(`/rest/v1/slc_records?office=eq.${o}&record_type=eq.${t}&order=record_date.desc.nullslast,id.desc&limit=1`));
+      const typeFilter = t === 'new_business'
+        ? 'record_type=in.(new_business,quote_rotation)'
+        : 'record_type=eq.call_rotation';
+      fetches.push(sbFetch(`/rest/v1/slc_records?office=eq.${o}&${typeFilter}&order=record_date.desc.nullslast,id.desc&limit=1`));
     }));
     const results = await Promise.all(fetches);
 
